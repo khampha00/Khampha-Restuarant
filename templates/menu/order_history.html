@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Order History{% endblock %}
+
+{% block content %}
+<div class="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8 text-center">Your Order History</h1>
+    <div class="space-y-8">
+        {% for order in orders %}
+            <div class="border border-gray-200 rounded-lg p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start border-b border-gray-200 pb-4 mb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">Order #{{ order.id }}</h2>
+                        <p class="text-sm text-gray-500">Placed on: {{ order.created_at|date:"F d, Y, P" }}</p>
+                    </div>
+                    <div class="text-left sm:text-right mt-2 sm:mt-0">
+                         <p class="text-lg font-bold">Total: ${{ order.total_price|floatformat:2 }}</p>
+                         <span class="mt-1 inline-block px-3 py-1 text-sm font-semibold rounded-full
+                            {% if order.is_paid %} bg-green-100 text-green-800 {% else %} bg-yellow-100 text-yellow-800 {% endif %}">
+                            {% if order.is_paid %}Paid{% else %}Pending Payment{% endif %}
+                         </span>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2 text-gray-700">Items:</h3>
+                    <ul class="list-disc list-inside space-y-1 text-gray-600">
+                        {% for item in order.items.all %}
+                            <li>{{ item.quantity }} x {{ item.menu_item.name }} at ${{ item.price|floatformat:2 }} each</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% empty %}
+             <div class="text-center text-gray-500 py-10">
+                <p class="text-xl mb-4">You have not placed any orders yet.</p>
+                <a href="{% url 'menu_list' %}" class="bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-900 transition duration-300">
+                    Start Ordering
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
